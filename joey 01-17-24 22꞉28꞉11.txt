@@ -1,0 +1,18 @@
+New Log File @joey!
+joey/Move Backward 01-17-24 22:28:12
+joey/Move Forward 01-17-24 22:28:13
+joey/Turn Left 01-17-24 22:28:14
+joey/Stop 01-17-24 22:28:14
+joey/Turn Right 01-17-24 22:28:14
+joey/Move Forward 01-17-24 22:28:15
+joey/Move Backward 01-17-24 22:28:15
+joey/Turn Left 01-17-24 22:28:15
+joey/Stop 01-17-24 22:28:16
+joey/Turn Right 01-17-24 22:28:16
+joey/Move Forward 01-17-24 22:28:16
+joey/Stop 01-17-24 22:28:16
+joey/Turn Right 01-17-24 22:28:17
+joey/Turn Left 01-17-24 22:28:17
+joey/Move Backward 01-17-24 22:28:17
+joey/Stop 01-17-24 22:28:18
+joey/Move Forward 01-17-24 22:28:18

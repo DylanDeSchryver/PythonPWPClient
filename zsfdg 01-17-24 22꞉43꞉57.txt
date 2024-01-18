@@ -1,0 +1,7 @@
+New Log File @zsfdg!
+zsfdg/Move Backward 01-17-24 22:43:58
+zsfdg/Turn Left 01-17-24 22:43:58
+zsfdg/Stop 01-17-24 22:43:59
+zsfdg/Turn Right 01-17-24 22:43:59
+zsfdg/Move Forward 01-17-24 22:43:59
+zsfdg/Logout 01-17-24 22:44:00
