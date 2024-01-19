@@ -7,9 +7,8 @@ from sql_program import *
 import requests
 import datetime
 import os
-import numpy as np
 import cv2
-import threading
+
 
 # Global variables
 user_info = {'name': '', 'last_name': '', 'username': '', 'password': ''}
@@ -29,11 +28,10 @@ def send_command(direction):
     else:
         print(f"Failed to send command '{direction}'")
 
-#Function to update camera feed, produces error: Error updating camera feed: ("Connection broken: InvalidChunkLength(got length b'', 0 bytes read)", InvalidChunkLength(got length b'', 0 bytes read))
-# Function to update camera feed
+# Function to update camera feed with overlay
 def update_overlay_feed(top_left_frame):
     try:
-        url = 'http://10.0.0.190:4200/camera'
+        url = 'http://192.168.1.30:4200/camera'
         cap = cv2.VideoCapture(url)
 
         # Function to convert OpenCV image to Tkinter PhotoImage
@@ -65,9 +63,10 @@ def update_overlay_feed(top_left_frame):
     except Exception as e:
         print(f"Error updating camera feed: {e}")
 
+#Function to display camera feed without overlay
 def update_camera_feed(bottom_left_frame):
     try:
-        url = 'http://10.0.0.190:4200/cam'
+        url = 'http://192.168.1.30:4200/cam'
         cap = cv2.VideoCapture(url)
 
         # Function to convert OpenCV image to Tkinter PhotoImage
@@ -223,7 +222,7 @@ def loggedin(username, password, key, name):
     root = tk.Tk()
     root.geometry("600x600")
     root.title("Logged In")
-
+    root.resizable(False, False)
     top_left_frame = tk.Frame(root, bg="white", width=300, height=300)
     top_right_frame = tk.Frame(root, bg="black", width=300, height=300)
     bottom_left_frame = tk.Frame(root, width=300, height=300, bg='pink')
@@ -250,34 +249,34 @@ def loggedin(username, password, key, name):
     forward_button = tk.Button(
         top_right_frame,
         text="   ^   \nForward",
-        command=lambda: [forward()]
+        command=lambda: [send_command('forward'),forward()]
     )
 
     backward_button = tk.Button(
         top_right_frame,
         text="Backward\n   v   ",
-        command=lambda: [backward()]
+        command=lambda: [send_command('backward'),backward()]
     )
 
     left_button = tk.Button(
         top_right_frame,
         text="<   Left",
-        command=lambda: [left()]
+        command=lambda: [send_command('left'),left()]
     )
 
     right_button = tk.Button(
         top_right_frame,
         text="Right   >",
-        command=lambda: [right()]
+        command=lambda: [send_command('right'),right()]
     )
 
     stop_button = tk.Button(
         top_right_frame,
         text="   Stop   ",
-        command=lambda: [stop()]
+        command=lambda: [send_command('stop'),stop()]
     )
 
-    logout_button = tk.Button(top_right_frame, text="   Logout   ", command=lambda: [logout()])
+    logout_button = tk.Button(top_right_frame, text="   Logout   ", command=lambda: [send_command('stop'),logout()])
 
     forward_button.grid(row=0, column=1)
     backward_button.grid(row=2, column=1)
