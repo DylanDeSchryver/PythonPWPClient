@@ -141,44 +141,44 @@ def loggedin(username, password, key, name):
     forward_button = tk.Button(
         top_right_frame,
         text="    ↑    ",
-        command=lambda: [#send_command('forward'),
+        command=lambda: [send_command('forward'),
                          log_forward()]
     )
 
     backward_button = tk.Button(
         top_right_frame,
         text="    ↓    ",
-        command=lambda: [#send_command('backward'),
+        command=lambda: [send_command('backward'),
                          log_backward()]
     )
 
     left_button = tk.Button(
         top_right_frame,
         text="    ←    ",
-        command=lambda: [#send_command('left'),
+        command=lambda: [send_command('left'),
                          log_left()]
     )
 
     right_button = tk.Button(
         top_right_frame,
         text="    →    ",
-        command=lambda: [#send_command('right'),
+        command=lambda: [send_command('right'),
                          log_right()]
     )
     play_button = tk.Button(
         top_right_frame,
         text="   ▶   ",
-        command=lambda: [#send_command('play'),
+        command=lambda: [send_command('play'),
                          log_play()]
     )
     stop_button = tk.Button(
         top_right_frame,
         text="   🟥   ",
-        command=lambda: [#send_command('stop'),
+        command=lambda: [send_command('stop'),
                          log_stop()]
     )
 
-    logout_button = tk.Button(top_right_frame, text="   Logout   ", command=lambda: [#send_command('stop'),
+    logout_button = tk.Button(top_right_frame, text="   Logout   ", command=lambda: [send_command('stop'),
                                                                                      log_logout()])
 
     forward_button.grid(row=1, column=1)
