@@ -1,7 +1,0 @@
-New Log File @gaf!
-gaf/Move Backward 01-17-24 22:41:09
-gaf/Move Forward 01-17-24 22:41:09
-gaf/Stop 01-17-24 22:41:09
-gaf/Turn Left 01-17-24 22:41:10
-gaf/Turn Right 01-17-24 22:41:10
-gaf/Logout 01-17-24 22:41:10
