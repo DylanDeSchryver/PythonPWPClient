@@ -1,13 +1,12 @@
 import sqlite3
 import random
-import logingui
+import GUI
 import hashlib
-
 import base64
 
 
 def save_sql():
-    user_info = logingui.user_info  # gets dictionary from logingui, which should be filled in from create or login functions
+    user_info = GUI.user_info  # gets dictionary from GUI, which should be filled in from create or login functions
 
     connection = sqlite3.connect("USER.db")  # makes connection to table and database
 

@@ -1,6 +1,4 @@
-from tkinter import *
-from tkinter import messagebox
-from logingui import window
+from GUI import window
 import os
 
 file_path = "USER.db"

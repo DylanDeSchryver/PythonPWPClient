@@ -1,102 +1,18 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import messagebox
-from PIL import ImageTk
-from PIL import Image
-from sql_program import *
-import requests
 import datetime
 import os
-import cv2
+from info_and_check import save_info, check_login
+from direction import send_command
+from camfeeds import update_camera_feed, update_overlay_feed
 
 
 # Global variables
+
 user_info = {'name': '', 'last_name': '', 'username': '', 'password': ''}
 
 
 log_text = None
-
-#Function to send commands to the robot
-def send_command(direction):
-    ip = '192.168.1.30'
-    url = f'http://192.168.1.30:4200/move'
-    data = {'direction': direction}
-
-    response = requests.post(url, json=data)
-    if response.status_code == 200:
-        print(f"Command '{direction}' sent successfully.")
-    else:
-        print(f"Failed to send command '{direction}'")
-
-# Function to update camera feed with overlay
-def update_overlay_feed(top_left_frame):
-    try:
-        url = 'http://192.168.1.30:4200/camera'
-        cap = cv2.VideoCapture(url)
-
-        # Function to convert OpenCV image to Tkinter PhotoImage
-        def convert_to_photo_image(frame):
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image = Image.fromarray(image)
-            photo = ImageTk.PhotoImage(image=image)
-            return photo
-
-        # Function to update the label within top_left_frame with a new image
-        def update_label():
-            ret, frame = cap.read()
-
-            if ret:
-                photo = convert_to_photo_image(frame)
-                camera_feed_label.configure(image=photo)
-                camera_feed_label.image = photo
-                top_left_frame.after(10, update_label)  # Update every 10 milliseconds
-            else:
-                print("Error reading frame from camera feed")
-
-        # Create a label within top_left_frame for displaying the camera feed
-        camera_feed_label = tk.Label(top_left_frame)
-        camera_feed_label.pack()
-
-        # Start updating the label
-        update_label()
-
-    except Exception as e:
-        print(f"Error updating camera feed: {e}")
-
-#Function to display camera feed without overlay
-def update_camera_feed(bottom_left_frame):
-    try:
-        url = 'http://192.168.1.30:4200/cam'
-        cap = cv2.VideoCapture(url)
-
-        # Function to convert OpenCV image to Tkinter PhotoImage
-        def convert_to_photo_image(frame):
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image = Image.fromarray(image)
-            photo = ImageTk.PhotoImage(image=image)
-            return photo
-
-        # Function to update the label within top_left_frame with a new image
-        def update_label():
-            ret, frame = cap.read()
-
-            if ret:
-                photo = convert_to_photo_image(frame)
-                camera_feed_label.configure(image=photo)
-                camera_feed_label.image = photo
-                bottom_left_frame.after(10, update_label)  # Update every 10 milliseconds
-            else:
-                print("Error reading frame from camera feed")
-
-        # Create a label within top_left_frame for displaying the camera feed
-        camera_feed_label = tk.Label(bottom_left_frame)
-        camera_feed_label.pack()
-
-        # Start updating the label
-        update_label()
-
-    except Exception as e:
-        print(f"Error updating camera feed: {e}")
 
 # Main window
 def window():
@@ -156,21 +72,12 @@ def create():
     passw_entry = Entry(creates, show='*')
     passw_entry.pack()
 
-    save_button = Button(creates, text='Save and Exit', command=lambda:[save_info(),window()])
+    save_button = Button(creates, text='Save and Exit', command=lambda: [save_info(creates,user_info,name_entry, last_entry, user_entry, passw_entry),window()])
     save_button.pack()
 
     creates.mainloop()
 
-# Save user information to global variables and run save_sql()
-def save_info():
-    global creates
-    global user_info, name_entry, last_entry, user_entry, passw_entry
-    user_info['name'] = name_entry.get()
-    user_info['last_name'] = last_entry.get()
-    user_info['username'] = user_entry.get()
-    user_info['password'] = passw_entry.get()
-    save_sql()
-    creates.destroy()
+
 
 # Login window
 def login():
@@ -195,25 +102,10 @@ def login():
     passwlogin_entry = Entry(logins, show='*')
     passwlogin_entry.pack()
 
-    login_button = Button(logins, text='Log In', command=check_login)
+    login_button = Button(logins, text='Log In', command=lambda: check_login(logins,userlogin_entry, passwlogin_entry))
     login_button.pack()
 
-# Check if the username and password are correct
-def check_login():
-    global logins
-    global userlogin_entry, passwlogin_entry
 
-    username = userlogin_entry.get()
-    password = passwlogin_entry.get()
-    key = get_sql(username, password)
-
-    if key:
-        logins.destroy()
-        name = first(username, password)
-        loggedin(username, password, key, name)
-    else:
-        messagebox.showerror('Error', "Incorrect Username or Password.")
-        logins.destroy()
 
 # Logged-in window
 def loggedin(username, password, key, name):
@@ -224,7 +116,7 @@ def loggedin(username, password, key, name):
     root.title("Logged In")
     root.resizable(False, False)
     top_left_frame = tk.Frame(root, bg="white", width=300, height=300)
-    top_right_frame = tk.Frame(root, bg="black", width=300, height=300)
+    top_right_frame = tk.Frame(root, bg="turquoise", width=300, height=300)
     bottom_left_frame = tk.Frame(root, width=300, height=300, bg='pink')
     bottom_right_frame = tk.Frame(root, width=300, height=300)
 
@@ -248,42 +140,54 @@ def loggedin(username, password, key, name):
 
     forward_button = tk.Button(
         top_right_frame,
-        text="   ^   \nForward",
-        command=lambda: [send_command('forward'),forward()]
+        text="    ↑    ",
+        command=lambda: [#send_command('forward'),
+                         log_forward()]
     )
 
     backward_button = tk.Button(
         top_right_frame,
-        text="Backward\n   v   ",
-        command=lambda: [send_command('backward'),backward()]
+        text="    ↓    ",
+        command=lambda: [#send_command('backward'),
+                         log_backward()]
     )
 
     left_button = tk.Button(
         top_right_frame,
-        text="<   Left",
-        command=lambda: [send_command('left'),left()]
+        text="    ←    ",
+        command=lambda: [#send_command('left'),
+                         log_left()]
     )
 
     right_button = tk.Button(
         top_right_frame,
-        text="Right   >",
-        command=lambda: [send_command('right'),right()]
+        text="    →    ",
+        command=lambda: [#send_command('right'),
+                         log_right()]
     )
-
+    play_button = tk.Button(
+        top_right_frame,
+        text="   ▶   ",
+        command=lambda: [#send_command('play'),
+                         log_play()]
+    )
     stop_button = tk.Button(
         top_right_frame,
-        text="   Stop   ",
-        command=lambda: [send_command('stop'),stop()]
+        text="   🟥   ",
+        command=lambda: [#send_command('stop'),
+                         log_stop()]
     )
 
-    logout_button = tk.Button(top_right_frame, text="   Logout   ", command=lambda: [send_command('stop'),logout()])
+    logout_button = tk.Button(top_right_frame, text="   Logout   ", command=lambda: [#send_command('stop'),
+                                                                                     log_logout()])
 
-    forward_button.grid(row=0, column=1)
-    backward_button.grid(row=2, column=1)
-    left_button.grid(row=1, column=0)
-    right_button.grid(row=1, column=2)
-    stop_button.grid(row=1, column=1)
-    logout_button.grid(row=2, column=2)
+    forward_button.grid(row=1, column=1)
+    backward_button.grid(row=3, column=1)
+    left_button.grid(row=2, column=0)
+    right_button.grid(row=2, column=2)
+    stop_button.grid(row=2, column=1)
+    play_button.grid(row=4, column = 1)
+    logout_button.grid(row=5, column=1)
 
     root.grid_rowconfigure(0, weight=1)
     root.grid_rowconfigure(1, weight=1)
@@ -302,7 +206,8 @@ def loggedin(username, password, key, name):
         f.write(f'New Log File @{username}!')
         print("log created")
 
-    def forward():
+    #the following log_ functions add the movements to the log file
+    def log_forward():
         current_time = datetime.datetime.now()
 
         today = current_time.strftime("%x")
@@ -312,7 +217,7 @@ def loggedin(username, password, key, name):
         with open(filename, 'at') as f:
             f.write(f'\n{username}/Move Forward {today} {today_time}')
 
-    def backward():
+    def log_backward():
         current_time = datetime.datetime.now()
 
         today = current_time.strftime("%x")
@@ -322,7 +227,7 @@ def loggedin(username, password, key, name):
         with open(filename, 'at') as f:
             f.write(f'\n{username}/Move Backward {today} {today_time}')
 
-    def left():
+    def log_left():
         current_time = datetime.datetime.now()
 
         today = current_time.strftime("%x")
@@ -332,7 +237,7 @@ def loggedin(username, password, key, name):
         with open(filename, 'at') as f:
             f.write(f'\n{username}/Turn Left {today} {today_time}')
 
-    def right():
+    def log_right():
         current_time = datetime.datetime.now()
 
         today = current_time.strftime("%x")
@@ -342,7 +247,16 @@ def loggedin(username, password, key, name):
         with open(filename, 'at') as f:
             f.write(f'\n{username}/Turn Right {today} {today_time}')
 
-    def stop():
+    def log_play():
+        current_time = datetime.datetime.now()
+
+        today = current_time.strftime("%x")
+        today_time = current_time.strftime("%X")
+        today = today.replace('/', '-')
+        log_message(f'\n{username}/Play {today} {today_time}')
+        with open(filename, 'at') as f:
+            f.write(f'\n{username}/Play {today} {today_time}')
+    def log_stop():
         current_time = datetime.datetime.now()
 
         today = current_time.strftime("%x")
@@ -352,7 +266,7 @@ def loggedin(username, password, key, name):
         with open(filename, 'at') as f:
             f.write(f'\n{username}/Stop {today} {today_time}')
 
-    def logout():
+    def log_logout():
         #global log_text
         current_time = datetime.datetime.now()
 
@@ -364,13 +278,13 @@ def loggedin(username, password, key, name):
         with open(filename, 'at') as f:
             f.write(f'\n{username}/Logout {today} {today_time}')
         window()
-
+    #Edits real time log in GUI
     def log_message(message):
         current_text = log_text.get("1.0", tk.END)
         new_text = f"{message}\n{current_text}"
         log_text.delete("1.0", tk.END)
         log_text.insert("1.0", new_text)
-
+    #Just to say welcome + name
     def welcome():
         log_text.insert("1.0", f"\nWelcome {name}\n")
 
@@ -380,7 +294,7 @@ def loggedin(username, password, key, name):
 
 # Save window
 def save():
-    global root
+
     root = Tk()
     root.geometry("600x400")
     root.title("Save and Exit")
