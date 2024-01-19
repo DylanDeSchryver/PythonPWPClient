@@ -1,4 +1,0 @@
-New Log File @hi!
-hi/Move Forward 01-17-24 22:20:39
-hi/Stop 01-17-24 22:20:40
-hi/Logout 01-17-24 22:20:41
